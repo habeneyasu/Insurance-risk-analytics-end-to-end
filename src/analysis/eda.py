@@ -170,18 +170,14 @@ class EDAAnalyzer:
         pd.DataFrame
             Vehicle risk analysis
         """
-        # Check if Make and Model columns exist
-        if "Make" not in self.data.columns or "Model" not in self.data.columns:
-            # Try alternative column names (case-insensitive)
-            make_col = next((col for col in self.data.columns if col.lower() == "make"), None)
-            model_col = next((col for col in self.data.columns if col.lower() == "model"), None)
-            
-            if make_col and model_col:
-                groupby_cols = [make_col, model_col]
-            else:
-                raise ValueError("Make and Model columns not found in data")
-        else:
-            groupby_cols = ["Make", "Model"]
+        # Find make and model columns (case-insensitive)
+        make_col = next((col for col in self.data.columns if col.lower() == "make"), None)
+        model_col = next((col for col in self.data.columns if col.lower() == "model"), None)
+        
+        if not make_col or not model_col:
+            raise ValueError("Make and Model columns not found in data")
+        
+        groupby_cols = [make_col, model_col]
         
         vehicle_risk = (
             self.data.groupby(groupby_cols)
@@ -195,15 +191,19 @@ class EDAAnalyzer:
             .reset_index()
         )
         
+        # Use original column names in output
         vehicle_risk.columns = [
-            "Make",
-            "Model",
+            make_col,
+            model_col,
             "TotalClaims_Sum",
             "TotalClaims_Mean",
             "PolicyCount",
             "TotalPremium_Sum",
             "AvgCustomValue",
         ]
+        
+        # Rename for consistency in downstream code
+        vehicle_risk = vehicle_risk.rename(columns={make_col: "Make", model_col: "Model"})
         
         vehicle_risk["LossRatio"] = (
             vehicle_risk["TotalClaims_Sum"] / vehicle_risk["TotalPremium_Sum"]
