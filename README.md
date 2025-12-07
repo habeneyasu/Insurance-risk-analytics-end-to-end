@@ -132,9 +132,9 @@ Testing the following null hypotheses:
 - [ ] Statistical analysis and visualizations
 
 ### Task 2: Data Version Control (DVC)
-- [ ] DVC setup and configuration
-- [ ] Data versioning
-- [ ] Local remote storage setup
+- [x] DVC setup and configuration
+- [x] Data versioning
+- [x] Local remote storage setup
 
 ### Task 3: Hypothesis Testing
 - [ ] A/B testing implementation
@@ -180,10 +180,12 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Initialize DVC (for Task 2):
+4. Initialize DVC (already done in Task 2):
 ```bash
-pip install dvc
-dvc init
+# DVC is already initialized and configured
+# Data is tracked via DVC in .dvc/storage/
+# To pull data: dvc pull
+# To check status: dvc status
 ```
 
 ### Running the EDA
