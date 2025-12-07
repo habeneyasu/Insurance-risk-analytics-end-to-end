@@ -1,248 +1,105 @@
 # Insurance Risk Analytics & Predictive Modeling
 
-## Project Overview
+End-to-end insurance risk analytics solution for **AlphaCare Insurance Solutions (ACIS)**, focused on car insurance planning and marketing in South Africa.
 
-This project is an end-to-end insurance risk analytics solution for **AlphaCare Insurance Solutions (ACIS)**, focused on car insurance planning and marketing in South Africa. The objective is to analyze historical insurance claim data to optimize marketing strategy and discover "low-risk" targets for premium reduction, thereby attracting new clients.
+## Overview
 
-## Business Objective
+This project analyzes historical insurance claim data (Feb 2014 - Aug 2015) to optimize marketing strategy and identify low-risk segments for premium reduction. The solution includes exploratory data analysis, statistical hypothesis testing, and machine learning models for premium prediction.
 
-Develop cutting-edge risk and predictive analytics to:
-- Optimize marketing strategy
-- Discover low-risk segments for premium reduction
-- Build predictive models for optimal premium pricing
-- Provide actionable insights for product tailoring
+## Key Features
+
+- **Exploratory Data Analysis (EDA)**: Comprehensive data quality assessment, loss ratio analysis, and risk segmentation
+- **Data Version Control**: DVC integration for reproducible data pipelines
+- **Statistical Testing**: A/B hypothesis testing for risk differences across provinces, zipcodes, and demographics
+- **Predictive Modeling**: Linear regression and ML models for premium optimization
+- **Object-Oriented Architecture**: Modular, maintainable codebase
 
 ## Project Structure
 
 ```
-Insurance-risk-analytics-end-to-end/
-├── data/                      # Data files (versioned with DVC)
-├── notebooks/                 # Jupyter notebooks for exploration
-├── src/                       # Source code
-│   ├── data/                 # Data processing modules
-│   ├── analysis/             # Statistical analysis modules
-│   ├── models/               # ML model implementations
-│   └── utils/                # Utility functions
-├── tests/                     # Unit tests
-├── reports/                   # Generated reports and visualizations
-├── .github/                   # GitHub Actions workflows
-│   └── workflows/
-├── requirements.txt          # Python dependencies
-├── .gitignore               # Git ignore rules
-└── README.md                # This file
+├── data/              # Data files (versioned with DVC)
+├── notebooks/         # Jupyter notebooks
+├── src/               # Source code
+│   ├── data/         # Data loading and preprocessing
+│   ├── analysis/     # EDA and statistical analysis
+│   └── models/       # ML model implementations
+├── reports/           # Generated reports and visualizations
+└── requirements.txt   # Python dependencies
 ```
 
-## Key Analysis Areas
-
-### 1. Insurance Terminologies
-Understanding key insurance concepts and terminology.
-
-### 2. A/B Hypothesis Testing
-Testing the following null hypotheses:
-- No risk differences across provinces
-- No risk differences between zipcodes
-- No significant margin (profit) difference between zip codes
-- No significant risk difference between Women and men
-
-### 3. Machine Learning & Statistical Modeling
-- Linear regression models per zipcode to predict total claims
-- ML model for optimal premium prediction based on:
-  - Car features
-  - Owner features
-  - Location features
-  - Other relevant features
-- Feature importance analysis
-
-## Data Description
-
-**Time Period:** February 2014 to August 2015
-
-### Data Columns
-
-#### Insurance Policy
-- `UnderwrittenCoverID`
-- `PolicyID`
-- `TransactionMonth`
-
-#### Client Information
-- `IsVATRegistered`
-- `Citizenship`
-- `LegalType`
-- `Title`
-- `Language`
-- `Bank`
-- `AccountType`
-- `MaritalStatus`
-- `Gender`
-
-#### Location
-- `Country`
-- `Province`
-- `PostalCode`
-- `MainCrestaZone`
-- `SubCrestaZone`
-
-#### Vehicle Information
-- `ItemType`
-- `Mmcode`
-- `VehicleType`
-- `RegistrationYear`
-- `Make`
-- `Model`
-- `Cylinders`
-- `Cubiccapacity`
-- `Kilowatts`
-- `Bodytype`
-- `NumberOfDoors`
-- `VehicleIntroDate`
-- `CustomValueEstimate`
-- `AlarmImmobiliser`
-- `TrackingDevice`
-- `CapitalOutstanding`
-- `NewVehicle`
-- `WrittenOff`
-- `Rebuilt`
-- `Converted`
-- `CrossBorder`
-- `NumberOfVehiclesInFleet`
-
-#### Plan Details
-- `SumInsured`
-- `TermFrequency`
-- `CalculatedPremiumPerTerm`
-- `ExcessSelected`
-- `CoverCategory`
-- `CoverType`
-- `CoverGroup`
-- `Section`
-- `Product`
-- `StatutoryClass`
-- `StatutoryRiskType`
-
-#### Financial Metrics
-- `TotalPremium`
-- `TotalClaims`
-
-## Tasks
-
-### Task 1: Git, GitHub, and EDA
-- [x] Git repository setup
-- [ ] GitHub Actions CI/CD
-- [ ] Exploratory Data Analysis (EDA)
-- [ ] Statistical analysis and visualizations
-
-### Task 2: Data Version Control (DVC)
-- [x] DVC setup and configuration
-- [x] Data versioning
-- [x] Local remote storage setup
-
-### Task 3: Hypothesis Testing
-- [ ] A/B testing implementation
-- [ ] Statistical hypothesis tests
-- [ ] Results interpretation
-
-### Task 4: Machine Learning Models
-- [ ] Linear regression per zipcode
-- [ ] Premium prediction model
-- [ ] Feature importance analysis
-
-## Setup Instructions
-
-### Prerequisites
-- Python 3.8+
-- Git
-- DVC (for Task 2)
+## Quick Start
 
 ### Installation
 
-1. Clone the repository:
 ```bash
-git clone <repository-url>
+# Clone repository
+git clone https://github.com/habeneyasu/Insurance-risk-analytics-end-to-end.git
 cd Insurance-risk-analytics-end-to-end
-```
 
-2. Run setup script (recommended):
-```bash
+# Setup environment
 chmod +x setup.sh
 ./setup.sh
-```
 
-Or manually:
-
-2. Create and activate virtual environment:
-```bash
+# Or manually:
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Initialize DVC (already done in Task 2):
-```bash
-# DVC is already initialized and configured
-# Data is tracked via DVC in .dvc/storage/
-# To pull data: dvc pull
-# To check status: dvc status
-```
+### Run EDA
 
-### Running the EDA
-
-To run the complete EDA pipeline:
 ```bash
+# Complete EDA pipeline
 python src/run_eda.py
-```
 
-Or use the Jupyter notebook for interactive exploration:
-```bash
+# Interactive exploration
 jupyter notebook notebooks/01_eda_exploration.ipynb
 ```
 
-## Key Metrics & KPIs
+### Data Management
 
-### Loss Ratio
+```bash
+# Pull data (if needed)
+dvc pull
+
+# Check DVC status
+dvc status
 ```
-Loss Ratio = TotalClaims / TotalPremium
-```
 
-### Analysis Focus Areas
-- Loss ratio by Province, VehicleType, and Gender
-- Distribution of financial variables
-- Temporal trends (18-month period)
-- Vehicle make/model risk analysis
+## Key Metrics
 
-## Learning Outcomes
+- **Loss Ratio**: `TotalClaims / TotalPremium`
+- **Analysis Dimensions**: Province, VehicleType, Gender, PostalCode
+- **Dataset**: 1M+ records, 52 features, 23 months
 
-- Data Engineering (DE)
-- Predictive Analytics (PA)
-- Machine Learning Engineering (MLE)
-- Statistical Modeling
-- A/B Testing Design
-- Data Versioning
-- Modular Python Development
+## Analysis Components
+
+1. **Data Quality Assessment**: Missing values, outliers, duplicates
+2. **Loss Ratio Analysis**: By province, vehicle type, gender
+3. **Temporal Trends**: Monthly claims and premium patterns
+4. **Vehicle Risk Analysis**: Make/model risk profiling
+5. **Geographic Analysis**: Province and postal code risk mapping
+
+## Technology Stack
+
+- **Python 3.8+**: Core language
+- **Pandas/NumPy**: Data processing
+- **Matplotlib/Seaborn**: Visualization
+- **Scikit-learn**: Machine learning
+- **DVC**: Data version control
+- **Git/GitHub**: Version control and CI/CD
+
+## Project Status
+
+- ✅ Task 1: Git, GitHub, and EDA
+- ✅ Task 2: Data Version Control (DVC)
+- 🔄 Task 3: A/B Hypothesis Testing
+- 🔄 Task 4: Machine Learning Models
 
 ## Team
 
-- **Facilitators:** Kerod, Mahbubah, Filimon
-
-## Key Dates
-
-- **Challenge Introduction:** 10:30 AM UTC, Wednesday, 03 Dec 2025
-- **Interim Submission:** 8:00 PM UTC, Sunday, 07 Dec 2025
-- **Final Submission:** 8:00 PM UTC, Tuesday, 09 Dec 2025
-
-## Deliverables
-
-1. Comprehensive EDA report with visualizations
-2. Statistical hypothesis testing results
-3. Machine learning models with performance metrics
-4. Feature importance analysis
-5. Business recommendations
-6. Reproducible codebase with version control
+Facilitators: Kerod, Mahbubah, Filimon
 
 ## License
 
-This project is part of the KAIM Training Portfolio.
-
+Part of the KAIM Training Portfolio.
