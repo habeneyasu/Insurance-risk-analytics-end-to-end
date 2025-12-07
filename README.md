@@ -161,9 +161,17 @@ git clone <repository-url>
 cd Insurance-risk-analytics-end-to-end
 ```
 
+2. Run setup script (recommended):
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+Or manually:
+
 2. Create and activate virtual environment:
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
@@ -176,6 +184,18 @@ pip install -r requirements.txt
 ```bash
 pip install dvc
 dvc init
+```
+
+### Running the EDA
+
+To run the complete EDA pipeline:
+```bash
+python src/run_eda.py
+```
+
+Or use the Jupyter notebook for interactive exploration:
+```bash
+jupyter notebook notebooks/01_eda_exploration.ipynb
 ```
 
 ## Key Metrics & KPIs
