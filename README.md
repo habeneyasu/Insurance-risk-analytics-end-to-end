@@ -29,14 +29,14 @@ This project analyzes historical insurance claim data (Feb 2014 - Aug 2015) to o
 
 ## Development Workflow
 
-This project uses a **Pull Request (PR) based workflow**. All changes must go through PRs for review before merging to `main`. See [WORKFLOW.md](WORKFLOW.md) for detailed guidelines.
+This project uses a **Pull Request (PR) based workflow**. All changes must go through PRs for review before merging to `main`.
 
 ### Creating a PR
 
 1. Create a task branch: `git checkout -b task-{number}`
 2. Make changes and commit
 3. Push branch: `git push -u origin task-{number}`
-4. Create PR on GitHub: Use the PR template
+4. Create PR on GitHub
 5. Wait for review and approval
 6. Merge via GitHub interface
 
