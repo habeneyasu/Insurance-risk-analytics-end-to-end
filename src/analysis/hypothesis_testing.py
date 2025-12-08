@@ -382,6 +382,9 @@ class HypothesisTester:
         dict
             Test results
         """
+        # Calculate margin first (adds Margin column to self.data)
+        self.calculate_margin()
+        
         # Get top N zip codes by policy count
         zipcode_counts = self.data['PostalCode'].value_counts().head(top_n)
         top_zipcodes = zipcode_counts.index.tolist()
@@ -392,7 +395,7 @@ class HypothesisTester:
         if len(filtered_data) == 0:
             return {'error': 'No data for top zip codes'}
         
-        # Create temporary tester with filtered data
+        # Create temporary tester with filtered data (now includes Margin column)
         temp_tester = HypothesisTester(filtered_data)
         results = {}
         
