@@ -170,7 +170,12 @@ class DataPreprocessor:
         elif method == 'onehot':
             # One-hot encoding
             for col in categorical_cols:
-                if self.data[col].nunique() <= max_categories:
+                if col not in self.data.columns:
+                    continue
+                
+                n_unique = self.data[col].nunique()
+                
+                if n_unique <= max_categories:
                     # One-hot encode
                     dummies = pd.get_dummies(
                         self.data[col].astype(str).fillna('Unknown'),
@@ -179,7 +184,7 @@ class DataPreprocessor:
                     )
                     self.data = pd.concat([self.data, dummies], axis=1)
                     self.data = self.data.drop(columns=[col])
-                    print(f"  ✓ One-hot encoded: {col} ({self.data[col].nunique()} categories)")
+                    print(f"  ✓ One-hot encoded: {col} ({n_unique} categories -> {len(dummies.columns)} dummy columns)")
                 else:
                     # For high cardinality, use label encoding
                     le = LabelEncoder()
@@ -188,7 +193,7 @@ class DataPreprocessor:
                     )
                     self.label_encoders[col] = le
                     self.data = self.data.drop(columns=[col])
-                    print(f"  ✓ Label encoded (high cardinality): {col}")
+                    print(f"  ✓ Label encoded (high cardinality): {col} ({n_unique} categories)")
     
     def select_features(self, target: str, exclude_cols: List[str] = None) -> List[str]:
         """
