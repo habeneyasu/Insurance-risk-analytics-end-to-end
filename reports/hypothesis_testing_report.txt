@@ -1,0 +1,119 @@
+HYPOTHESIS TESTING REPORT
+================================================================================
+
+================================================================================
+HYPOTHESIS TESTING REPORT
+================================================================================
+
+
+================================================================================
+TEST: PROVINCE RISK
+================================================================================
+
+
+CLAIM FREQUENCY:
+  Test Type: Chi-square
+  Null Hypothesis: No association between Province and HasClaim
+  P-value: 0.000000
+  Significance Level: α = 0.05
+  Result: Reject H₀
+  ⚠️  REJECT H₀: Statistically significant difference detected
+
+
+CLAIM SEVERITY:
+  Test Type: One-way ANOVA
+  Null Hypothesis: No difference in TotalClaims across Province
+  P-value: 0.000000
+  Significance Level: α = 0.05
+  Result: Reject H₀
+  ⚠️  REJECT H₀: Statistically significant difference detected
+
+
+================================================================================
+TEST: ZIPCODE RISK
+================================================================================
+
+
+CLAIM FREQUENCY:
+  Test Type: Chi-square
+  Null Hypothesis: No association between PostalCode and HasClaim
+  P-value: 0.000000
+  Significance Level: α = 0.05
+  Result: Reject H₀
+  ⚠️  REJECT H₀: Statistically significant difference detected
+
+
+CLAIM SEVERITY:
+  Test Type: One-way ANOVA
+  Null Hypothesis: No difference in TotalClaims across PostalCode
+  P-value: 0.000027
+  Significance Level: α = 0.05
+  Result: Reject H₀
+  ⚠️  REJECT H₀: Statistically significant difference detected
+
+
+================================================================================
+TEST: ZIPCODE MARGIN
+================================================================================
+
+
+MARGIN:
+  Test Type: One-way ANOVA
+  Null Hypothesis: No difference in Margin across PostalCode
+  P-value: 0.396364
+  Significance Level: α = 0.05
+  Result: Fail to reject H₀
+  ✓  FAIL TO REJECT H₀: No statistically significant difference
+
+
+================================================================================
+TEST: GENDER RISK
+================================================================================
+
+
+CLAIM FREQUENCY:
+  Test Type: Chi-square
+  Null Hypothesis: No association between Gender and HasClaim
+  P-value: 0.951464
+  Significance Level: α = 0.05
+  Result: Fail to reject H₀
+  ✓  FAIL TO REJECT H₀: No statistically significant difference
+
+
+CLAIM SEVERITY:
+  Test Type: Independent Samples t-test
+  Null Hypothesis: No difference in TotalClaims between Male and Female
+  P-value: 0.804107
+  Significance Level: α = 0.05
+  Result: Fail to reject H₀
+  ✓  FAIL TO REJECT H₀: No statistically significant difference
+  Group A (Male): Mean = 32.62
+  Group B (Female): Mean = 37.05
+  Difference: -4.43 (-11.95%)
+
+
+================================================================================
+BUSINESS RECOMMENDATIONS
+================================================================================
+
+Province Risk - Claim Frequency:
+  ⚠️ REJECT H₀: Significant difference in Claim Frequency detected (p < 0.0000).
+
+Province Risk - Claim Severity:
+  ⚠️ REJECT H₀: Significant differences in Claim Severity across groups (p < 0.0000, highly significant). KwaZulu-Natal shows 500.5% higher Claim Severity than Northern Cape. Consider segment-specific pricing.
+
+Zipcode Risk - Claim Frequency:
+  ⚠️ REJECT H₀: Significant difference in Claim Frequency detected (p < 0.0000).
+
+Zipcode Risk - Claim Severity:
+  ⚠️ REJECT H₀: Significant differences in Claim Severity across groups (p < 0.0000, highly significant). 2196 shows 348.1% higher Claim Severity than 7405. Consider segment-specific pricing.
+
+Zipcode Margin:
+  ✓ No significant difference in Margin (Zipcodes). No action required.
+
+Gender Risk - Claim Frequency:
+  ✓ No significant difference in Claim Frequency (Gender). No action required.
+
+Gender Risk - Claim Severity:
+  ✓ No significant difference in Claim Severity (Gender). No action required.
+
