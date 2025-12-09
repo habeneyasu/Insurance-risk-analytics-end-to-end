@@ -158,19 +158,45 @@ class HypothesisTester:
         
         # Test 1: Claim Frequency (Chi-square test)
         print("\n[Test 1.1] Claim Frequency Test (Chi-square)")
-        frequency_results = self._test_categorical_frequency(
-            group_col='Province',
-            outcome_col='HasClaim',
-            test_name='Province Claim Frequency'
-        )
+        # EXPLICIT: Create contingency table for chi-square test
+        contingency_table = pd.crosstab(self.data['Province'], self.data['HasClaim'])
+        # EXPLICIT: Run chi-square test
+        chi2_statistic, p_value_freq, degrees_of_freedom, expected_frequencies = chi2_contingency(contingency_table)
+        print(f"  Chi-square statistic: {chi2_statistic:.4f}")
+        print(f"  Degrees of freedom: {degrees_of_freedom}")
+        print(f"  p-value: {p_value_freq:.6f}")
+        frequency_results = {
+            'test_name': 'Province Claim Frequency',
+            'statistic': chi2_statistic,
+            'p_value': p_value_freq,
+            'degrees_of_freedom': degrees_of_freedom
+        }
         
-        # Test 2: Claim Severity (ANOVA or Kruskal-Wallis for multiple groups)
-        print("\n[Test 1.2] Claim Severity Test (ANOVA/Kruskal-Wallis)")
-        severity_results = self._test_categorical_severity(
-            group_col='Province',
-            severity_col='ClaimSeverityGivenClaim',
-            test_name='Province Claim Severity'
-        )
+        # Test 2: Claim Severity (Kruskal-Wallis test for multiple groups)
+        print("\n[Test 1.2] Claim Severity Test (Kruskal-Wallis)")
+        # EXPLICIT: Create groups for Kruskal-Wallis test
+        severity_groups = []
+        for province in provinces:
+            province_severity = self.data[
+                (self.data['Province'] == province) & 
+                (self.data['ClaimSeverityGivenClaim'].notna())
+            ]['ClaimSeverityGivenClaim'].values
+            if len(province_severity) > 0:
+                severity_groups.append(province_severity)
+        # EXPLICIT: Run Kruskal-Wallis test
+        if len(severity_groups) >= 2:
+            kruskal_statistic, p_value_sev = stats.kruskal(*severity_groups)
+            print(f"  Kruskal-Wallis statistic: {kruskal_statistic:.4f}")
+            print(f"  p-value: {p_value_sev:.6f}")
+        else:
+            p_value_sev = 1.0
+            kruskal_statistic = None
+        severity_results = {
+            'test_name': 'Province Claim Severity',
+            'statistic': kruskal_statistic,
+            'p_value': p_value_sev,
+            'num_groups': len(severity_groups)
+        }
         
         # Combine results
         p_value_freq = frequency_results.get('p_value', 1.0)
@@ -275,23 +301,46 @@ class HypothesisTester:
         
         # Test 1: Claim Frequency (Chi-square test across all zip codes)
         print("\n[Test 2.1] Claim Frequency Test (Chi-square across all zip codes)")
-        frequency_results = self._test_categorical_frequency(
-            group_col='PostalCode',
-            outcome_col='HasClaim',
-            test_name='Zipcode Claim Frequency'
-        )
+        # EXPLICIT: Create contingency table for chi-square test
+        contingency_table = pd.crosstab(self.data[self.data['PostalCode'].isin(valid_zips)]['PostalCode'], 
+                                        self.data[self.data['PostalCode'].isin(valid_zips)]['HasClaim'])
+        # EXPLICIT: Run chi-square test
+        chi2_statistic, p_value_freq, degrees_of_freedom, expected_frequencies = chi2_contingency(contingency_table)
+        print(f"  Chi-square statistic: {chi2_statistic:.4f}")
+        print(f"  Degrees of freedom: {degrees_of_freedom}")
+        print(f"  p-value: {p_value_freq:.6f}")
+        frequency_results = {
+            'test_name': 'Zipcode Claim Frequency',
+            'statistic': chi2_statistic,
+            'p_value': p_value_freq,
+            'degrees_of_freedom': degrees_of_freedom
+        }
         
         # Test 2: Claim Severity (Kruskal-Wallis test across all zip codes)
         print("\n[Test 2.2] Claim Severity Test (Kruskal-Wallis across all zip codes)")
-        severity_results = self._test_categorical_severity(
-            group_col='PostalCode',
-            severity_col='ClaimSeverityGivenClaim',
-            test_name='Zipcode Claim Severity'
-        )
-        
-        # Combine results
-        p_value_freq = frequency_results.get('p_value', 1.0)
-        p_value_sev = severity_results.get('p_value', 1.0)
+        # EXPLICIT: Create groups for Kruskal-Wallis test
+        severity_groups = []
+        for zipcode in valid_zips:
+            zipcode_severity = self.data[
+                (self.data['PostalCode'] == zipcode) & 
+                (self.data['ClaimSeverityGivenClaim'].notna())
+            ]['ClaimSeverityGivenClaim'].values
+            if len(zipcode_severity) > 0:
+                severity_groups.append(zipcode_severity)
+        # EXPLICIT: Run Kruskal-Wallis test
+        if len(severity_groups) >= 2:
+            kruskal_statistic, p_value_sev = stats.kruskal(*severity_groups)
+            print(f"  Kruskal-Wallis statistic: {kruskal_statistic:.4f}")
+            print(f"  p-value: {p_value_sev:.6f}")
+        else:
+            p_value_sev = 1.0
+            kruskal_statistic = None
+        severity_results = {
+            'test_name': 'Zipcode Claim Severity',
+            'statistic': kruskal_statistic,
+            'p_value': p_value_sev,
+            'num_groups': len(severity_groups)
+        }
         
         # Overall result: reject if either test is significant
         overall_p_value = min(p_value_freq, p_value_sev)
@@ -435,17 +484,22 @@ class HypothesisTester:
         else:
             sample_b = margin_b
         
-        # Use Mann-Whitney U test (non-parametric, more robust)
-        stat, p_value = mannwhitneyu(margin_a, margin_b, alternative='two-sided')
+        # EXPLICIT: Run Mann-Whitney U test (non-parametric t-test alternative)
+        mannwhitney_statistic, p_value = mannwhitneyu(margin_a, margin_b, alternative='two-sided')
         mean_margin_a = margin_a.mean()
         mean_margin_b = margin_b.mean()
         
         print(f"  Group A mean margin: R{mean_margin_a:,.2f} (n={len(margin_a)})")
         print(f"  Group B mean margin: R{mean_margin_b:,.2f} (n={len(margin_b)})")
-        print(f"  Mann-Whitney U statistic: {stat:.4f}")
+        print(f"  Mann-Whitney U statistic: {mannwhitney_statistic:.4f}")
         print(f"  p-value: {p_value:.6f}")
         
+        # EXPLICIT: P-value threshold comparison
+        # Compare p-value to significance threshold (alpha = 0.05)
         reject_null = p_value < alpha
+        print(f"\n[Decision] P-value threshold (alpha): {alpha}")
+        print(f"  P-value: {p_value:.6f}")
+        print(f"  Decision: {'REJECT H₀' if reject_null else 'FAIL TO REJECT H₀'} (p {'<' if reject_null else '>='} {alpha})")
         
         # Business interpretation
         if reject_null:
@@ -473,7 +527,7 @@ class HypothesisTester:
             'group_b_size': len(group_b),
             'group_a_mean_margin': mean_margin_a,
             'group_b_mean_margin': mean_margin_b,
-            'statistic': stat,
+            'statistic': mannwhitney_statistic,
             'p_value': p_value,
             'alpha': alpha,
             'reject_null': reject_null,
@@ -561,47 +615,60 @@ class HypothesisTester:
         
         # Test 1: Claim Frequency (Chi-square test)
         print("\n[Test 4.1] Claim Frequency Test (Chi-square)")
+        # EXPLICIT: Create control and test groups
         freq_a = group_a['HasClaim'].sum()
         freq_b = group_b['HasClaim'].sum()
         n_a = len(group_a)
         n_b = len(group_b)
         
+        # EXPLICIT: Create contingency table for chi-square test
         contingency = pd.DataFrame({
             'Has Claim': [freq_a, freq_b],
             'No Claim': [n_a - freq_a, n_b - freq_b]
         }, index=['Female', 'Male'])
         
-        chi2, p_value_freq, dof, expected = chi2_contingency(contingency)
+        # EXPLICIT: Run chi-square test
+        chi2_statistic, p_value_freq, degrees_of_freedom, expected_frequencies = chi2_contingency(contingency)
         freq_rate_a = freq_a / n_a
         freq_rate_b = freq_b / n_b
         
         print(f"  Female frequency: {freq_rate_a:.4f} ({freq_a}/{n_a})")
         print(f"  Male frequency: {freq_rate_b:.4f} ({freq_b}/{n_b})")
-        print(f"  Chi-square statistic: {chi2:.4f}")
+        print(f"  Chi-square statistic: {chi2_statistic:.4f}")
+        print(f"  Degrees of freedom: {degrees_of_freedom}")
         print(f"  p-value: {p_value_freq:.6f}")
         
         # Test 2: Claim Severity (Mann-Whitney U test)
         print("\n[Test 4.2] Claim Severity Test (Mann-Whitney U)")
+        # EXPLICIT: Extract severity data for control and test groups
         severity_a = group_a['ClaimSeverityGivenClaim'].dropna()
         severity_b = group_b['ClaimSeverityGivenClaim'].dropna()
         
+        # EXPLICIT: Run Mann-Whitney U test
         if len(severity_a) > 0 and len(severity_b) > 0:
-            stat, p_value_sev = mannwhitneyu(severity_a, severity_b, alternative='two-sided')
+            mannwhitney_statistic, p_value_sev = mannwhitneyu(severity_a, severity_b, alternative='two-sided')
             mean_sev_a = severity_a.mean()
             mean_sev_b = severity_b.mean()
             
             print(f"  Female mean severity: R{mean_sev_a:,.2f} (n={len(severity_a)})")
             print(f"  Male mean severity: R{mean_sev_b:,.2f} (n={len(severity_b)})")
-            print(f"  Mann-Whitney U statistic: {stat:.4f}")
+            print(f"  Mann-Whitney U statistic: {mannwhitney_statistic:.4f}")
             print(f"  p-value: {p_value_sev:.6f}")
         else:
             p_value_sev = 1.0
             mean_sev_a = 0
             mean_sev_b = 0
         
-        # Overall result
+        # EXPLICIT: P-value threshold comparison
+        # Overall result: reject if either test is significant
         overall_p_value = min(p_value_freq, p_value_sev)
+        # EXPLICIT: Compare p-value to threshold (alpha = 0.05)
         reject_null = overall_p_value < alpha
+        print(f"\n[Decision] P-value threshold (alpha): {alpha}")
+        print(f"  Frequency p-value: {p_value_freq:.6f}")
+        print(f"  Severity p-value: {p_value_sev:.6f}")
+        print(f"  Overall p-value: {overall_p_value:.6f}")
+        print(f"  Decision: {'REJECT H₀' if reject_null else 'FAIL TO REJECT H₀'} (p {'<' if reject_null else '>='} {alpha})")
         
         # Business interpretation
         if reject_null:
@@ -631,13 +698,13 @@ class HypothesisTester:
             'frequency_test': {
                 'female_rate': freq_rate_a,
                 'male_rate': freq_rate_b,
-                'chi2': chi2,
+                'chi2': chi2_statistic,
                 'p_value': p_value_freq
             },
             'severity_test': {
                 'female_mean': mean_sev_a,
                 'male_mean': mean_sev_b,
-                'statistic': stat if len(severity_a) > 0 and len(severity_b) > 0 else None,
+                'statistic': mannwhitney_statistic if len(severity_a) > 0 and len(severity_b) > 0 else None,
                 'p_value': p_value_sev
             },
             'p_value_frequency': p_value_freq,
@@ -658,6 +725,62 @@ class HypothesisTester:
         print(f"\n[Business Conclusion] {business_conclusion}")
         
         return result
+    
+    def interpret_statistical_results(self, p_value: float, alpha: float, 
+                                      test_name: str, group_a_name: str = None,
+                                      group_b_name: str = None, 
+                                      group_a_metric: float = None,
+                                      group_b_metric: float = None) -> str:
+        """
+        EXPLICIT BUSINESS LOGIC FUNCTION: Interpret statistical test results.
+        
+        This function takes p-values and explicitly interprets them with business logic.
+        
+        Parameters:
+        -----------
+        p_value : float
+            P-value from statistical test
+        alpha : float
+            Significance threshold (typically 0.05)
+        test_name : str
+            Name of the test being interpreted
+        group_a_name : str, optional
+            Name of control group
+        group_b_name : str, optional
+            Name of test group
+        group_a_metric : float, optional
+            Metric value for group A
+        group_b_metric : float, optional
+            Metric value for group B
+        
+        Returns:
+        --------
+        str
+            Business interpretation of the results
+        """
+        # EXPLICIT: Compare p-value to threshold
+        is_significant = p_value < alpha
+        
+        if is_significant:
+            interpretation = (
+                f"We REJECT the null hypothesis (p = {p_value:.6f} < {alpha:.3f}). "
+                f"Significant differences exist in {test_name}."
+            )
+            if group_a_name and group_b_name and group_a_metric is not None and group_b_metric is not None:
+                pct_diff = ((group_a_metric - group_b_metric) / abs(group_b_metric)) * 100 if group_b_metric != 0 else 0
+                interpretation += (
+                    f" {group_a_name} exhibits {abs(pct_diff):.1f}% "
+                    f"{'higher' if pct_diff > 0 else 'lower'} {test_name} than {group_b_name}, "
+                    f"suggesting adjustments may be warranted."
+                )
+        else:
+            interpretation = (
+                f"We FAIL TO REJECT the null hypothesis (p = {p_value:.6f} >= {alpha:.3f}). "
+                f"No statistically significant differences were found in {test_name} "
+                f"at the {alpha*100}% significance level."
+            )
+        
+        return interpretation
     
     def _test_categorical_frequency(self, group_col: str, outcome_col: str, 
                                     test_name: str) -> Dict[str, Any]:
