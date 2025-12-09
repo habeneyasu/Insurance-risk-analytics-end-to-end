@@ -50,6 +50,7 @@ data/*.xlsx
 # DVC
 .dvc/cache/
 .dvc/tmp/
+.dvc/storage/
 
 # Reports and outputs
 reports/*.html

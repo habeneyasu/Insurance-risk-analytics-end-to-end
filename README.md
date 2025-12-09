@@ -73,19 +73,39 @@ Insurance-risk-analytics-end-to-end/
 
 ### Statistical Hypothesis Testing Results
 
-1. **Province Risk Differences**: **REJECTED H₀** (p < 0.0000)
+The hypothesis testing implementation uses concrete test functions that construct control/test groups, run appropriate statistical tests (chi-squared, t-tests, Mann-Whitney U, Kruskal-Wallis), compute p-values, and return both statistical results and business conclusions.
+
+**Test Implementation Details:**
+- **Metrics Used**: Claim Frequency (proportion of policies with claims), Claim Severity (average claim amount given a claim occurred), and Margin (TotalPremium - TotalClaims)
+- **Statistical Tests**: Chi-square tests for categorical/frequency data, Mann-Whitney U and Kruskal-Wallis tests for continuous/non-parametric comparisons
+- **Data Segmentation**: Control and test groups are created with equivalence checks to ensure groups are comparable on other features
+- **Significance Level**: α = 0.05
+
+**Results:**
+
+1. **Province Risk Differences**: **REJECTED H₀** (p < 0.000001)
+   - Test: Chi-square (Frequency) + Kruskal-Wallis (Severity) across all provinces
    - Significant risk differences exist across provinces
-   - KwaZulu-Natal shows 500.5% higher claim severity than Northern Cape
+   - Gauteng exhibits 332.3% higher loss ratio than Northern Cape (1.222 vs 0.283)
+   - **Business Conclusion**: Regional risk adjustments to premiums are warranted
 
-2. **Zipcode Risk Differences**: **REJECTED H₀** (p < 0.0000)
+2. **Zipcode Risk Differences**: **REJECTED H₀** (p < 0.000001)
+   - Test: Chi-square (Frequency) + Kruskal-Wallis (Severity) across 818 zip codes
    - Significant risk differences between zip codes
-   - Zipcode 2196 shows 348.1% higher severity than 7405
+   - Tested across all zip codes with sufficient data (≥50 records each)
+   - **Business Conclusion**: Zipcode-level risk adjustments to premiums may be warranted
 
-3. **Zipcode Margin Differences**: **FAILED TO REJECT H₀** (p = 0.396)
-   - No significant profit margin differences across zip codes
+3. **Zipcode Margin Differences**: **REJECTED H₀** (p < 0.000001)
+   - Test: Mann-Whitney U test for margin comparison between zip codes
+   - Significant profit margin differences exist between zip codes
+   - Zipcode 1423 exhibits 111.3% higher margin than zipcode 1342 (R171.01 vs R-1,511.89)
+   - **Business Conclusion**: Zipcode-level profitability adjustments may be warranted
 
-4. **Gender Risk Differences**: **FAILED TO REJECT H₀** (p = 0.95)
+4. **Gender Risk Differences**: **FAILED TO REJECT H₀** (p = 0.224)
+   - Test: Chi-square (Frequency) + Mann-Whitney U (Severity)
    - No statistically significant risk differences between men and women
+   - Frequency p-value: 0.951, Severity p-value: 0.224
+   - **Business Conclusion**: Gender should not be a primary factor in pricing decisions, aligning with fair insurance practices
 
 ### Machine Learning Model Performance
 
@@ -143,11 +163,29 @@ The EDA revealed critical insights about portfolio composition and risk distribu
 
 ### Hypothesis Testing (Task 3)
 
-Statistical testing confirmed significant risk differences across provinces and zip codes, validating the need for geographic-based pricing strategies. The rejection of null hypotheses for province and zipcode risk differences provides strong evidence for implementing location-based premium adjustments.
+**Implementation Approach:**
 
-**Key Insight**: Geographic factors are significant risk drivers, supporting the implementation of region-specific pricing models.
+The A/B hypothesis testing implementation follows a rigorous statistical framework with concrete test functions in the `HypothesisTester` class (`src/analysis/hypothesis_testing.py`). Each hypothesis test:
 
-The failure to reject the null hypothesis for gender-based differences is important - it suggests that gender should not be a primary factor in pricing decisions, aligning with fair insurance practices.
+1. **Selects Metrics**: Uses Claim Frequency, Claim Severity, and Margin as key performance indicators
+2. **Creates Data Segmentation**: Constructs control and test groups, ensuring statistical equivalence on other features (client attributes, vehicle properties, insurance plan types) before testing
+3. **Runs Statistical Tests**: 
+   - Chi-square tests for categorical/frequency comparisons
+   - Mann-Whitney U tests for two-group non-parametric comparisons
+   - Kruskal-Wallis tests for multiple-group non-parametric comparisons
+4. **Computes P-values**: All tests return p-values for hypothesis decision-making (α = 0.05)
+5. **Generates Business Conclusions**: Each test provides both statistical results and actionable business interpretations
+
+**Key Findings:**
+
+Statistical testing confirmed significant risk differences across provinces and zip codes, validating the need for geographic-based pricing strategies. The rejection of null hypotheses for province, zipcode risk, and zipcode margin differences provides strong evidence for implementing location-based premium adjustments.
+
+**Key Insight**: Geographic factors are significant risk drivers, supporting the implementation of region-specific pricing models. The failure to reject the null hypothesis for gender-based differences is important - it suggests that gender should not be a primary factor in pricing decisions, aligning with fair insurance practices.
+
+**Test Execution:**
+- All tests are executed via `python src/run_hypothesis_tests.py`
+- Comprehensive reports are generated in `reports/hypothesis_testing_report.txt`
+- Each test includes detailed statistical outputs, p-values, and business recommendations
 
 ### Machine Learning Models (Task 4)
 
