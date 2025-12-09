@@ -233,6 +233,47 @@ python src/run_hypothesis_tests.py
 python src/run_ml_models.py
 ```
 
+### Pull Request Workflow
+
+This project follows a **branch-based PR workflow** to ensure code quality and maintainability:
+
+1. **Create Topic-Focused Branches**: For each task or feature, create a dedicated branch from `main`
+   ```bash
+   git checkout -b task-3-hypothesis-testing-update
+   ```
+
+2. **Make Changes and Commit**: Implement your changes with descriptive commit messages
+   ```bash
+   git add .
+   git commit -m "Task 3: Implement comprehensive A/B hypothesis testing"
+   ```
+
+3. **Push Branch and Create PR**: Push your branch to remote and open a Pull Request
+   ```bash
+   git push origin task-3-hypothesis-testing-update
+   ```
+   Then create a PR on GitHub from your branch to `main`.
+
+4. **CI Checks**: The PR will automatically trigger CI checks:
+   - Linting with flake8
+   - Code formatting check with black
+   - Test execution
+   - PR validation
+
+5. **Review and Merge**: After CI passes and code review, merge the PR into `main`.
+
+**Task Branches:**
+- `task-1`: Git, GitHub, and EDA
+- `task-2`: Data Version Control (DVC)
+- `task-3`: A/B Hypothesis Testing
+- `task-4`: Machine Learning Models
+
+**Best Practices:**
+- Use smaller, topic-focused branches for better traceability
+- Link PRs to issues when applicable
+- Ensure all CI checks pass before merging
+- Write descriptive commit messages and PR descriptions
+
 ## Technology Stack
 
 - **Python 3.8+**: Core language
